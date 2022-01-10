@@ -9,14 +9,14 @@ on:
       - master
 
 jobs:
-  Build:
+  build_only:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build App Docker Image
         run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
   
-  testing:
+  test_only:
     runs-on: ubuntu-latest
     - name: Run Test Cases
       run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
