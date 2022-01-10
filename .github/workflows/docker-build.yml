@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Build App Docker Image
-      run: docker build -t aelshemy/docker-react -f Dockerfile.dev
+      run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
       
     - name: Run Test Cases
       run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
