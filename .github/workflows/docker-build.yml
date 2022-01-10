@@ -9,25 +9,21 @@ on:
       - master
 
 jobs:
-  build_only:
+  Build_and_Deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Fetching Repository
+        uses: actions/checkout@v2
+
       - name: Build App Docker Image
         run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
-  
-  test_only:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+      
       - name: Run Test Cases
         run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
-
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+      
       - name: Generate deployment package
         run: zip -r artifacts.zip . -x '*.git*'
+
       - name: Deploy to EBS
         uses: einaregilsson/beanstalk-deploy@v18
         with:
