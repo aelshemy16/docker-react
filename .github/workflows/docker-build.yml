@@ -8,33 +8,33 @@ on:
     branches:
       - master
 
-jobs:
-  Build_and_Deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fetching Repository
-        uses: actions/checkout@v2
+# jobs:
+#   Build_and_Deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Fetching Repository
+#         uses: actions/checkout@v2
 
-      - name: Build App Docker Image
-        run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
+#       - name: Build App Docker Image
+#         run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
       
-      - name: Run Test Cases
-        run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
+#       - name: Run Test Cases
+#         run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
       
-      - name: Generate deployment package
-        run: zip -r artifacts.zip . -x '*.git*'
+#       - name: Generate deployment package
+#         run: zip -r artifacts.zip . -x '*.git*'
 
-      - name: Deploy to EBS
-        uses: einaregilsson/beanstalk-deploy@v18
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: docker-react
-          environment_name: Dockerreact-env
-          existing_bucket_name: elasticbeanstalk-us-east-2-119125643188
-          region: us-east-2
-          version_label: ${{ github.sha }}
-          deployment_package: artifacts.zip
+#       - name: Deploy to EBS
+#         uses: einaregilsson/beanstalk-deploy@v18
+#         with:
+#           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+#           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+#           application_name: docker-react
+#           environment_name: Dockerreact-env
+#           existing_bucket_name: elasticbeanstalk-us-east-2-119125643188
+#           region: us-east-2
+#           version_label: ${{ github.sha }}
+#           deployment_package: artifacts.zip
 
 jobs:
   Fetch_Source:
