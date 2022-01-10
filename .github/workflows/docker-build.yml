@@ -57,7 +57,7 @@ jobs:
         run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
 
   Create_Artifacts:
-  needs: Run_Test
+    needs: Run_Test
     runs-on: ubuntu-latest
     steps:
       - name: Fetching Repository
