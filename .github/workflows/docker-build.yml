@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI/CD
 
 on:
   push:
@@ -23,6 +23,69 @@ jobs:
       
       - name: Generate deployment package
         run: zip -r artifacts.zip . -x '*.git*'
+
+      - name: Deploy to EBS
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: docker-react
+          environment_name: Dockerreact-env
+          existing_bucket_name: elasticbeanstalk-us-east-2-119125643188
+          region: us-east-2
+          version_label: ${{ github.sha }}
+          deployment_package: artifacts.zip
+
+jobs:
+  Fetch_Source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetching Repository
+        uses: actions/checkout@v2
+
+  Run_Test:
+    needs: Fetch_Source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetching Repository
+        uses: actions/checkout@v2
+
+      - name: Build App Docker Image
+        run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
+      
+      - name: Run Test Cases
+        run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
+
+  Create_Artifacts:
+  needs: Run_Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetching Repository
+        uses: actions/checkout@v2
+
+      - name: Generate deployment package
+        run: zip -r artifacts.zip . -x '*.git*'
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: appArtifacts
+          path: artifacts.zip
+  
+  Deploy_Artifacts:
+    needs: Create_Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display files list
+        run: ls -ltr
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: appArtifacts
+
+      - name: Display files list
+        run: ls -ltr
 
       - name: Deploy to EBS
         uses: einaregilsson/beanstalk-deploy@v18
