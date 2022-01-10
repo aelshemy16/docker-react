@@ -16,12 +16,12 @@ jobs:
       - name: Build App Docker Image
         run: docker build -t aelshemy/docker-react -f Dockerfile.dev .
   
-  Test:
+  testing:
     runs-on: ubuntu-latest
     - name: Run Test Cases
       run: docker run -e CI=true aelshemy/docker-react npm run test -- --coverage
 
-  Deploy:
+  deploy:
     runs-on: ubuntu-latest
     - name: Generate deployment package
       run: zip -r artifacts.zip . -x '*.git*'
